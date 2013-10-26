@@ -1,0 +1,32 @@
+{
+  "name": "perspective-core-web-socket-helper",
+  "version": "0.0.1",
+  "description": "",
+  "bugs": {
+    "url": "http://github.com/perspective/perspective-core-web-socket-helper/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/perspective/perspective-core-web-socket-helper.git"
+  },
+  "contributors":[
+    "Hans Magnus Inderberg <hinderberg@gmail.com> (http://hinderberg.no/)",
+    "Mads Mobœk <> ()"
+  ],
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "bin": {},
+  "scripts": {
+    "test": "make test"
+  },
+  "dependencies": {
+    "underscore": "~1.4.4",
+    "perspective-core": "*"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*",
+    "sinon": "*",
+    "sandboxed-module": "*"
+  }
+}
