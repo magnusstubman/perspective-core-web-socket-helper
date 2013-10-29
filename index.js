@@ -10,7 +10,6 @@
   }
 }(function (require, exports, module) {
 
-  var _ = require('underscore');
   var validation = require('perspective-core').validation;
 
   var validateMessage = function(message) {
@@ -37,7 +36,6 @@
   };
 
   var eventListeners = {};
-
 
   var getCallbacksForEvent = function(channel, event, createStructure) {
     var eventListenersForChannel = eventListeners[channel];
@@ -95,7 +93,8 @@
     on: function(channel, event, callback) {
       var callbacks = getCallbacksForEvent(channel, event, true);
       callbacks.push(callback);
-    }
+    },
+    listeners: eventListeners
   }
 
 }));
