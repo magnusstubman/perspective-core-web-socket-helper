@@ -12,7 +12,7 @@
 
   var validation = require('perspective-core').validation;
 
-  var validateMessage = function(message) {
+  function validateMessage(message) {
     try {
       message = JSON.parse(message);
     } catch (e) {
@@ -33,68 +33,61 @@
     }
 
     return message;
-  };
+  }
 
-  var eventListeners = {};
+  var channels = {};
 
-  var getCallbacksForEvent = function(channel, event, createStructure) {
-    var eventListenersForChannel = eventListeners[channel];
+  function getCallback(channelString, event) {
+    var channel = channels[channelString];
 
-    if (!eventListenersForChannel) {
-      if (!createStructure) {
-        return null;
-      }
-
-      eventListenersForChannel = eventListeners[channel] = {}
+    if (!channel) {
+      return null;
     }
 
-    var eventListenersForChannelAndEvent = eventListenersForChannel[event];
-    if (!eventListenersForChannelAndEvent) {
-      if (!createStructure) {
-        return null;
-      }
-
-      eventListenersForChannelAndEvent = eventListenersForChannel[event] = [];
+    var callbacks = channel[event];
+    if (!callbacks) {
+      return null;
     }
 
-    return eventListenersForChannelAndEvent;
-  };
+    return callbacks;
+  }
 
-  var standardEvents = {
-    error: "error"
-  };
+  function addCallbackToEventOnChannel(channelString, event, callback) {
+    var channel = channels[channelString] = channels[channelString] || {};
+    var callbacks = channel[event] =  channel[event] || [];
+    callbacks.push(callback);
+  }
+
+  function callCallbacksForMessage(message) {
+    var message = validateMessage(message);
+    if (message.errors) {
+      return message.errors;
+    }
+
+    var callbacks = getCallback(message.channel, message.event);
+
+    if (!callbacks)  {
+      return {
+        errors: {
+          noListeners: "There where no listeners for event '" + message.event + "' on channel '" + message.channel + "'"
+        }
+      };
+    }
+
+    callbacks.forEach(function(callback) {
+      callback(message);
+    });
+  }
+
+  function createJSONString(channel, event, object) {
+    var contextData = {channel: channel, event: event, data: object};
+    return JSON.stringify(contextData);
+  }
 
   module.exports = {
-    createJSONString: function(channel, event, object) {
-      var contextData = {channel: channel, event: event, data: object};
-      return JSON.stringify(contextData);
-    },
-    standardEvents: standardEvents,
-    onMessage: function(message) {
-      var message = validateMessage(message);
-      if (message.errors) {
-        return message.errors;
-      }
-
-      var callbacks = getCallbacksForEvent(message.channel, message.event);
-
-      if (!callbacks)  {
-        return {
-          errors: {
-            noListeners: "There where no listeners for event '" + message.event + "' on channel '" + message.channel + "'"
-          }
-        };
-      }
-
-      callbacks.forEach(function(callback) {
-        callback(message);
-      });
-    },
-    on: function(channel, event, callback) {
-      var callbacks = getCallbacksForEvent(channel, event, true);
-      callbacks.push(callback);
-    },
-    listeners: eventListeners
-  }
+    createJSONString: createJSONString,
+    callCallbacksForMessage: callCallbacksForMessage,
+    addCallbackToEventOnChannel: addCallbackToEventOnChannel
+  };
 
 }));
