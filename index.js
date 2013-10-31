@@ -55,7 +55,32 @@
   function addCallbackToEventOnChannel(channelString, event, callback) {
     var channel = channels[channelString] = channels[channelString] || {};
     var callbacks = channel[event] =  channel[event] || [];
+
+    if (typeof callback !== 'function') {
+      return {errors: {callback: "Need to be a function"}};
+    }
+
+    var index = callbacks.indexOf(callback);
+    if (index === 2) {
+      return {errors: {callback: "Already exists"}};
+    }
+
     callbacks.push(callback);
+  }
+
+  function removeCallbackForEventOnChannel(channelString, event, callback) {
+    var channel = channels[channelString];
+    if (!channel) return true;
+
+    var callbacks = channel[event];
+    if (!callbacks || callbacks.length === 0) return true;
+
+    var index = callbacks.indexOf(callback);
+    if (index === -1) return true;
+
+    callbacks.splice(index, 1);
+
+    return true;
   }
 
   function callCallbacksForMessage(message) {
@@ -79,15 +104,16 @@
     });
   }
 
-  function createJSONString(channel, event, object) {
-    var contextData = {channel: channel, event: event, data: object};
+  function createJSONString(channel, event, data) {
+    var contextData = {channel: channel, event: event, data: data};
     return JSON.stringify(contextData);
   }
 
   module.exports = {
     createJSONString: createJSONString,
     callCallbacksForMessage: callCallbacksForMessage,
-    addCallbackToEventOnChannel: addCallbackToEventOnChannel
+    addCallbackToEventOnChannel: addCallbackToEventOnChannel,
+    removeCallbackForEventOnChannel: removeCallbackForEventOnChannel
   };
 
 }));

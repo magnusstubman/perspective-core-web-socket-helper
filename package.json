@@ -25,8 +25,7 @@
   },
   "devDependencies": {
     "mocha": "*",
-    "should": "*",
-    "sinon": "*",
-    "sandboxed-module": "*"
+    "chai": "*",
+    "sinon": "*"
   }
 }
