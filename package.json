@@ -24,8 +24,8 @@
     "perspective-core": "*"
   },
   "devDependencies": {
-    "mocha": "*",
-    "chai": "*",
-    "sinon": "*"
+    "mocha": "~1.14.0",
+    "should": "~2.0.2",
+    "sinon": "~1.7.3"
   }
 }
